@@ -1,10 +1,10 @@
-import {  Text, View } from 'react-native';
+import { Container, Title } from './styles';
 
 export  function Groups() {
   return (
-    <View >
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
+    <Container>
+      <Title>Groups</Title>
+    </Container>
   );
 }
 
