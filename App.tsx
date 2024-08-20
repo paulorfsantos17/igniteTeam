@@ -9,9 +9,8 @@ import {
 import theme from './src/themes'
 import { Loading } from '@components/Loading'
 import { StatusBar } from 'react-native'
-import { Players } from '@screens/Players'
-import { NewGroup } from '@screens/NewGroups'
-import { Groups } from '@screens/Groups'
+
+import { Routes } from '@routes/index'
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
@@ -24,7 +23,7 @@ export default function App() {
           translucent
           backgroundColor="transparent"
         />
-        {fontsLoaded ? <Players /> : <Loading />}
+        {fontsLoaded ? <Routes /> : <Loading />}
       </ThemeProvider>
     </>
   )
