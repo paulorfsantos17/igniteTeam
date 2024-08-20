@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { ThemeProvider } from 'styled-components'
+import { ThemeProvider } from 'styled-components/native'
 import {
   useFonts,
   Roboto_400Regular,
