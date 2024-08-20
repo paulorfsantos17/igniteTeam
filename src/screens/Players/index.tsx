@@ -10,10 +10,19 @@ import { useState } from 'react'
 import { HeaderList } from '@components/Filter/styles'
 import { PlayerCard } from '@components/PlayerCard'
 import { Button } from '@components/Button'
+import { useRoute } from '@react-navigation/native'
+
+interface PlayersRouteParams {
+  group: string
+}
 
 export function Players() {
   const [team, setTeam] = useState('Time A')
   const [players, setPlayers] = useState(['Paulo'])
+
+  const route = useRoute()
+
+  const { group } = route.params as PlayersRouteParams
 
   const { COLORS } = useTheme()
 
@@ -25,7 +34,7 @@ export function Players() {
     <Container>
       <Header showBackButton />
       <Highlight
-        title="Nome da turma"
+        title={group}
         subtitle="Adicione a galera e separe os times."
       />
       <Input.Root>
