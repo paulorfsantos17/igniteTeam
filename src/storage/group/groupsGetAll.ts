@@ -13,7 +13,6 @@ export async function groupsGetAll() {
 
     return groups
   } catch (error) {
-    console.error('Error fetching groups:', error)
     throw error
   }
 }

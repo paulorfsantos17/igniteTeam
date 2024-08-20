@@ -5,6 +5,7 @@ import { AppError } from '@utils/AppError'
 
 export async function groupCreate(newGroup: string) {
   try {
+  
     const storageGroups = await groupsGetAll()
 
     const groupAlreadyExists = storageGroups.includes(newGroup)
@@ -16,7 +17,6 @@ export async function groupCreate(newGroup: string) {
 
     await AsyncStorage.setItem(GROUP_COLLECTION, storage)
   } catch (error) {
-    console.error('Error creating group:', error)
     throw error
   }
 }
