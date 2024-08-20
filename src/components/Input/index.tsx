@@ -1,12 +1,26 @@
-import type { TextInputProps } from 'react-native'
-import { Container } from './styles'
-import { useTheme } from 'styled-components/native'
+import React from 'react'
+import { Button, Container, InputTextStyle } from './styles'
+import type { TextInputProps, TouchableOpacityProps } from 'react-native'
 
-interface InputProps extends TextInputProps {}
-
-export function Input({ ...rest }: InputProps) {
-  const { COLORS } = useTheme()
-  return (
-    <Container placeholderTextColor={COLORS.GRAY_300} {...rest}></Container>
-  )
+interface RootProps {
+  children: React.ReactNode
 }
+
+interface InputTextProps extends TextInputProps {}
+
+interface InputButtonProps extends TouchableOpacityProps {
+  children: React.ReactNode
+}
+
+function Root({ children }: RootProps) {
+  return <Container>{children}</Container>
+}
+
+function InputText({ ...rest }: InputTextProps) {
+  return <InputTextStyle {...rest} />
+}
+function InputButton({ children, ...rest }: InputButtonProps) {
+  return <Button {...rest}>{children}</Button>
+}
+
+export const Input = { Root, InputText, InputButton }
