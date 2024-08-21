@@ -6,15 +6,17 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from 'styled-components/native'
 import { Filter } from '@components/Filter'
 import { Alert, FlatList, type TextInput } from 'react-native'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { HeaderList } from '@components/Filter/styles'
 import { PlayerCard } from '@components/PlayerCard'
 import { Button } from '@components/Button'
-import { useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { AppError } from '@utils/AppError'
 import { PlayerAddByGroup } from '@storage/player/PlayerAddByGroup'
 import type { PlayerStorageDTO } from '@storage/player/PlayerStorageDTO'
 import { playerGetByGroupAndTeam } from '@storage/player/playersGetByGroupAndTeam'
+import { PlayerRemoveByGroup } from '@storage/player/playerRemoveByGroup'
+import { groupRemoveByName } from '@storage/group/groupRemoveByName'
 
 interface PlayersRouteParams {
   group: string
@@ -24,6 +26,7 @@ export function Players() {
   const [team, setTeam] = useState('Time A')
   const [players, setPlayers] = useState<PlayerStorageDTO[]>([])
   const [newPlayerName, setNewPlayerName] = useState('')
+  const { navigate } = useNavigation()
 
   const newPlayerNameInputRef = useRef<TextInput>(null)
 
@@ -63,7 +66,44 @@ export function Players() {
     setNewPlayerName('')
   }
 
-  async function fetchPlayerByTeam() {
+  async function handleRemovePlayer(playerName: string) {
+    try {
+      await PlayerRemoveByGroup({ group, playerNameRemoved: playerName })
+      await fetchPlayerByTeam()
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert('Remover Jogador', error.message)
+      } else {
+        console.error(error)
+        Alert.alert('Remover Jogador', 'Não foi possível remover o jogador.')
+      }
+    }
+  }
+
+  async function groupRemove() {
+    try {
+      await groupRemoveByName({ groupNameDelete: group })
+      navigate('groups')
+    } catch (error) {
+      console.log('error:', error)
+      Alert.alert('Remove Grupo', 'Não foi possível remove o grupo.')
+    }
+  }
+
+  async function handleDeleteGroupByName() {
+    Alert.alert('Remover Grupo', 'Tem certeza que deseja remover este grupo?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Remover',
+        onPress: groupRemove,
+      },
+    ])
+  }
+
+  const fetchPlayerByTeam = useCallback(async () => {
     try {
       const playerByTeam = await playerGetByGroupAndTeam({ group, team })
 
@@ -72,11 +112,7 @@ export function Players() {
       Alert.alert('Buscar Jogadores', 'Não foi possível buscar os jogadores.')
       console.log(error)
     }
-  }
-
-  useEffect(() => {
-    fetchPlayerByTeam()
-  }, [team])
+  }, [team, group])
 
   return (
     <Container>
@@ -118,11 +154,18 @@ export function Players() {
         data={players}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <PlayerCard name={item.name} onRemove={() => {}} />
+          <PlayerCard
+            name={item.name}
+            onRemove={() => handleRemovePlayer(item.name)}
+          />
         )}
       />
 
-      <Button title="Remover turma" type="SECONDARY" />
+      <Button
+        title="Remover turma"
+        type="SECONDARY"
+        onPress={handleDeleteGroupByName}
+      />
     </Container>
   )
 }
